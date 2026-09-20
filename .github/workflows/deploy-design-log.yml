@@ -1,0 +1,63 @@
+name: Deploy design log
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check changed files
+        id: change-check
+        shell: bash
+        run: |
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          changed_files=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")
+          echo "$changed_files"
+
+          if printf '%s\n' "$changed_files" | grep -qv '^src/data/design-log.json$'; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping deploy because the change set is not limited to src/data/design-log.json"
+            exit 0
+          fi
+
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+
+      - name: Skip deployment
+        if: steps.change-check.outputs.deploy != 'true'
+        run: echo "No deployment triggered. Only src/data/design-log.json changes should deploy."
+
+      - name: Setup Node
+        if: steps.change-check.outputs.deploy == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.change-check.outputs.deploy == 'true'
+        run: npm install
+
+      - name: Build app
+        if: steps.change-check.outputs.deploy == 'true'
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        if: steps.change-check.outputs.deploy == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
