@@ -11,12 +11,6 @@
       "date": "2026-09-12",
       "category": "Research & Testing",
       "note": "User observations suggest the interface needs clearer labels and a faster path to the key controls.\n\n> Main takeaway: reduce friction before the first major task."
-    },
-    {
-      "member": "Grant Eisler",
-      "date": "2026-09-18",
-      "category": "Electrical",
-      "note": "Reviewed the wiring plan and validated the sensor mapping for the updated test rig.\n\n1. Confirm the power budget\n2. Bench-test the communication bus\n3. Record any voltage drops"
     }
   ]
 }
