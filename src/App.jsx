@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import designLogData from './data/design-log.json'
 import './App.css'
 
-const teamMembers = ['Jordan Wang', 'Emily Saint', 'Alisson Thompson', 'Grant Eisler', 'Pedro Brossel']
+const teamMembers = ['Unassigned / Team note', 'Jordan Wang', 'Emily Saint', 'Alisson Thompson', 'Grant Eisler', 'Pedro Brossel']
 const noteCategories = ['Admin Work', 'Mechanical Design', 'Electrical', 'Software & Controls', 'Research & Testing', 'Other']
 
 const initialEntries = designLogData.entries || []
@@ -101,7 +101,7 @@ function App() {
 
 	const jsonPreview = useMemo(() => {
 		const entry = {
-			member: formData.member,
+			member: formData.member === 'Unassigned / Team note' ? null : formData.member,
 			date: formData.date,
 			category: formData.category,
 			note: formData.note.trim(),
@@ -218,9 +218,11 @@ function App() {
 
 					<ul className="entry-list">
 						{entries.map((entry) => (
-							<li key={`${entry.member}-${entry.date}-${entry.category}`} className="entry-card">
+							<li key={`${entry.member ?? 'unassigned'}-${entry.date}-${entry.category}`} className="entry-card">
 								<div className="entry-topline">
-									<span className="member-badge">{entry.member}</span>
+									<span className={`member-badge ${(!entry.member || entry.member === 'Unassigned / Team note') ? 'team-note' : ''}`}>
+										{entry.member && entry.member !== 'Unassigned / Team note' ? entry.member : 'Unassigned / Team note'}
+									</span>
 									<span className="category-badge">{entry.category}</span>
 									<time dateTime={entry.date}>{formatDate(entry.date)}</time>
 								</div>

@@ -281,6 +281,11 @@ h1 {
   color: #1d3f7a;
 }
 
+.member-badge.team-note {
+  background: #efeaf9;
+  color: #5a3d7d;
+}
+
 .category-badge {
   background: #eaf7ef;
   color: #24613d;
