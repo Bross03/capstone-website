@@ -1,14 +1,14 @@
-# Design Log Website
+# MTE 481 Design Log
 
-A simple static website for documenting team progress and meeting notes. It includes a form for adding a new note by team member, stores the entries in the browser, and presents the log in a clean, accessible layout.
+A simple static website for team meeting notes and design log entries.
 
-## Features
+## What it does
 
-- 5-person team member dropdown
-- Date field for each entry
-- Notes textarea for meeting updates
-- Local browser storage so entries remain available after refresh
-- Minimal design that is easy for instructors to access
+- Select a team member or leave the entry as an unassigned team note
+- Choose a date and note category
+- Write notes with Markdown support
+- Copy the generated JSON for a repo-friendly update workflow
+- Review recent entries in a clean, low-clutter UI
 
 ## Run locally
 
@@ -17,20 +17,10 @@ npm install
 npm run dev
 ```
 
-## Recommended hosting
-
-For a simple static site like this, the best options are:
-
-- GitHub Pages: easiest and free for a course project
-- Netlify: simple drag-and-drop or Git deployment
-- Cloudflare Pages: good performance and easy static hosting
-
-If you want the simplest student-friendly option, GitHub Pages is the best recommendation.
-
-## Build for production
+## Build
 
 ```bash
 npm run build
 ```
 
-The generated `dist` folder can be uploaded directly to a static host.
+The built files are ready to host as a static site.
