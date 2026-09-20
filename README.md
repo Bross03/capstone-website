@@ -1,16 +1,36 @@
-# React + Vite
+# Design Log Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple static website for documenting team progress and meeting notes. It includes a form for adding a new note by team member, stores the entries in the browser, and presents the log in a clean, accessible layout.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 5-person team member dropdown
+- Date field for each entry
+- Notes textarea for meeting updates
+- Local browser storage so entries remain available after refresh
+- Minimal design that is easy for instructors to access
 
-## React Compiler
+## Run locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+## Recommended hosting
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+For a simple static site like this, the best options are:
+
+- GitHub Pages: easiest and free for a course project
+- Netlify: simple drag-and-drop or Git deployment
+- Cloudflare Pages: good performance and easy static hosting
+
+If you want the simplest student-friendly option, GitHub Pages is the best recommendation.
+
+## Build for production
+
+```bash
+npm run build
+```
+
+The generated `dist` folder can be uploaded directly to a static host.

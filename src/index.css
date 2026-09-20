@@ -50,8 +50,31 @@
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #f3f6fb;
+}
+
 body {
   margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f3f6fb 0%, #edf3ff 100%);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
 }
 
 #root {
