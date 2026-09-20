@@ -1,33 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
+import designLogData from './data/design-log.json'
 import './App.css'
 
 const teamMembers = ['Jordan Wang', 'Emily Saint', 'Alisson Thompson', 'Grant Eisler', 'Pedro Brossel']
 const noteCategories = ['Admin Work', 'Mechanical Design', 'Electrical', 'Software & Controls', 'Research & Testing', 'Other']
-const STORAGE_KEY = 'design-log-entries-v1'
 
-const defaultEntries = [
-	{
-		id: 1,
-		member: 'Jordan Wang',
-		date: '2026-09-08',
-		category: 'Mechanical Design',
-		note: '**Design review:** we narrowed the concept to a cleaner bracket system and improved the overall geometry for manufacturability.\n\n- Revisited the front frame layout\n- Confirmed material constraints\n- Next step: create a refined prototype sketch',
-	},
-	{
-		id: 2,
-		member: 'Emily Saint',
-		date: '2026-09-12',
-		category: 'Research & Testing',
-		note: 'User observations suggest the interface needs clearer labels and a faster path to the key controls.\n\n> Main takeaway: reduce friction before the first major task.',
-	},
-	{
-		id: 3,
-		member: 'Grant Eisler',
-		date: '2026-09-18',
-		category: 'Electrical',
-		note: 'Reviewed the wiring plan and validated the sensor mapping for the updated test rig.\n\n1. Confirm the power budget\n2. Bench-test the communication bus\n3. Record any voltage drops',
-	},
-]
+const initialEntries = designLogData.entries || []
 
 function escapeHtml(value) {
 	return value
@@ -112,86 +90,62 @@ function formatDate(dateString) {
 }
 
 function App() {
-	const [entries, setEntries] = useState(() => {
-		const savedEntries = localStorage.getItem(STORAGE_KEY)
-
-		if (!savedEntries) {
-			return defaultEntries
-		}
-
-		try {
-			const parsedEntries = JSON.parse(savedEntries)
-			return Array.isArray(parsedEntries) && parsedEntries.length > 0
-				? parsedEntries.map((entry) => ({
-						...entry,
-						category: noteCategories.includes(entry.category) ? entry.category : 'Other',
-				  }))
-				: defaultEntries
-		} catch {
-			return defaultEntries
-		}
-	})
-
+	const [entries] = useState(initialEntries)
 	const [formData, setFormData] = useState({
 		member: teamMembers[0],
 		category: noteCategories[0],
 		date: new Date().toISOString().slice(0, 10),
 		note: '',
 	})
+	const [copied, setCopied] = useState(false)
 
-	useEffect(() => {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(entries))
-	}, [entries])
+	const jsonPreview = useMemo(() => {
+		const entry = {
+			member: formData.member,
+			date: formData.date,
+			category: formData.category,
+			note: formData.note.trim(),
+		}
+
+		return JSON.stringify(entry, null, 2)
+	}, [formData])
 
 	const handleChange = (event) => {
 		const { name, value } = event.target
 		setFormData((current) => ({ ...current, [name]: value }))
 	}
 
-	const handleSubmit = (event) => {
-		event.preventDefault()
-
-		const trimmedNote = formData.note.trim()
-
-		if (!trimmedNote) {
-			return
+	const handleCopy = async () => {
+		try {
+			await navigator.clipboard.writeText(jsonPreview)
+			setCopied(true)
+		} catch (error) {
+			console.error('Clipboard copy failed:', error)
 		}
-
-		const newEntry = {
-			id: Date.now(),
-			member: formData.member,
-			category: formData.category,
-			date: formData.date,
-			note: trimmedNote,
-		}
-
-		setEntries((current) => [newEntry, ...current])
-		setFormData((current) => ({
-			...current,
-			note: '',
-			date: new Date().toISOString().slice(0, 10),
-		}))
 	}
 
 	return (
 		<div className="page-shell">
 			<header className="header">
-				<div>
-					<p className="eyebrow">MTE 481 • Fall 2026</p>
-					<h1>Design Log</h1>
+				<div className="title-block">
+					<div className="brand-mark" aria-hidden="true">MTE</div>
+					<div>
+						<p className="eyebrow">MTE 481 • Fall 2026</p>
+						<h1>Design Log</h1>
+					</div>
 				</div>
 
 				<div className="header-meta" aria-label="Design log summary">
 					<span>{entries.length} entries</span>
-					<span>Team notes</span>
+					<span>Commit-based notes</span>
 				</div>
 			</header>
 
 			<main className="layout">
 				<section className="panel form-panel" aria-labelledby="new-note-heading">
-					<h2 id="new-note-heading">Add a new note</h2>
+					<h2 id="new-note-heading">Generate JSON</h2>
 
-					<form onSubmit={handleSubmit} className="log-form">
+					<div className="log-form">
 						<div className="field-group">
 							<label htmlFor="member">Team member</label>
 							<select id="member" name="member" value={formData.member} onChange={handleChange}>
@@ -231,41 +185,53 @@ function App() {
 								id="note"
 								name="note"
 								rows="8"
-								placeholder="Use markdown here: **bold**, *italic*, list items, or [links](https://example.com)"
+								placeholder="Use markdown here: **bold**, *italic*, lists, or [links](https://example.com)"
 								value={formData.note}
 								onChange={handleChange}
 							/>
 						</div>
 
-						<p className="helper-text">Markdown is supported in note entries.</p>
+						<div className="json-generator-actions">
+							<p className="helper-text">Generated JSON for repo update.</p>
+							<button type="button" className="copy-button" onClick={handleCopy}>
+								{copied ? 'Copied!' : 'Copy JSON'}
+							</button>
+						</div>
 
-						<button type="submit">Save note</button>
-					</form>
+						<div className="json-preview-box">
+							<label htmlFor="json-preview">JSON preview</label>
+							<textarea
+								id="json-preview"
+								className="json-output"
+								readOnly
+								value={jsonPreview}
+								aria-label="JSON output for commit-based entry"
+							/>
+						</div>
+					</div>
 				</section>
 
 				<section className="panel entries-panel" aria-labelledby="recent-entries-heading">
-					<h2 id="recent-entries-heading">Recent entries</h2>
+					<div className="section-header-row">
+						<h2 id="recent-entries-heading">Recent entries</h2>
+					</div>
 
-					{entries.length === 0 ? (
-						<p className="empty-state">No design log entries yet.</p>
-					) : (
-						<ul className="entry-list">
-							{entries.map((entry) => (
-								<li key={entry.id} className="entry-card">
-									<div className="entry-topline">
-										<span className="member-badge">{entry.member}</span>
-										<span className="category-badge">{entry.category}</span>
-										<time dateTime={entry.date}>{formatDate(entry.date)}</time>
-									</div>
+					<ul className="entry-list">
+						{entries.map((entry) => (
+							<li key={`${entry.member}-${entry.date}-${entry.category}`} className="entry-card">
+								<div className="entry-topline">
+									<span className="member-badge">{entry.member}</span>
+									<span className="category-badge">{entry.category}</span>
+									<time dateTime={entry.date}>{formatDate(entry.date)}</time>
+								</div>
 
-									<div
-										className="markdown-content"
-										dangerouslySetInnerHTML={{ __html: renderMarkdown(entry.note) }}
-									/>
-								</li>
-							))}
-						</ul>
-					)}
+								<div
+									className="markdown-content"
+									dangerouslySetInnerHTML={{ __html: renderMarkdown(entry.note) }}
+								/>
+							</li>
+						))}
+					</ul>
 				</section>
 			</main>
 		</div>

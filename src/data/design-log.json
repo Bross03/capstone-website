@@ -1,0 +1,22 @@
+{
+  "entries": [
+    {
+      "member": "Jordan Wang",
+      "date": "2026-09-08",
+      "category": "Mechanical Design",
+      "note": "**Design review:** we narrowed the concept to a cleaner bracket system and improved the overall geometry for manufacturability.\n\n- Revisited the front frame layout\n- Confirmed material constraints\n- Next step: create a refined prototype sketch"
+    },
+    {
+      "member": "Emily Saint",
+      "date": "2026-09-12",
+      "category": "Research & Testing",
+      "note": "User observations suggest the interface needs clearer labels and a faster path to the key controls.\n\n> Main takeaway: reduce friction before the first major task."
+    },
+    {
+      "member": "Grant Eisler",
+      "date": "2026-09-18",
+      "category": "Electrical",
+      "note": "Reviewed the wiring plan and validated the sensor mapping for the updated test rig.\n\n1. Confirm the power budget\n2. Bench-test the communication bus\n3. Record any voltage drops"
+    }
+  ]
+}
